@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Admin Dashboard</title>
+<style>
+    :root {
+        --bg-color: #ffffff;
+        --text-color: #333333;
+        --header-bg: #4CAF50;
+        --sidebar-bg: #f4f4f4;
+        --link-color: #4CAF50;
+        --link-hover: #388e3c;
+        --footer-bg: #4CAF50;
+    }
+
+    body.dark-mode {
+        --bg-color: #1e1e1e;
+        --text-color: #f0f0f0;
+        --header-bg: #333333;
+        --sidebar-bg: #2a2a2a;
+        --link-color: #66bb6a;
+        --link-hover: #81c784;
+        --footer-bg: #333333;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        grid-template-columns: 220px 1fr;
+        grid-template-areas:
+            "header header"
+            "sidebar main"
+            "footer footer";
+        min-height: 100vh;
+        transition: all 0.3s ease;
+    }
+
+    header {
+        grid-area: header;
+        background: var(--header-bg);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.4rem;
+    }
+
+    header .controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    header button {
+        background: white;
+        color: var(--header-bg);
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: bold;
+        transition: background 0.3s, transform 0.2s;
+    }
+
+    header button:hover {
+        background: #f0f0f0;
+        transform: scale(1.05);
+    }
+
+    aside {
+        grid-area: sidebar;
+        background: var(--sidebar-bg);
+        padding: 15px;
+        transition: transform 0.3s ease;
+    }
+
+    aside a {
+        display: block;
+        color: var(--link-color);
+        text-decoration: none;
+        margin: 8px 0;
+        font-weight: bold;
+        padding: 6px 8px;
+        border-radius: 4px;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    aside a:hover {
+        background: var(--link-hover);
+        color: white;
+    }
+
+    main {
+        grid-area: main;
+        padding: 20px;
+    }
+
+    footer {
+        grid-area: footer;
+        background: var(--footer-bg);
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+
+    /* Mobile Sidebar Hidden */
+    .sidebar-hidden aside {
+        transform: translateX(-100%);
+        position: absolute;
+        z-index: 100;
+        height: 100%;
+    }
+
+    /* Responsive Layout */
+    @media (max-width: 768px) {
+        body {
+            grid-template-columns: 1fr;
+            grid-template-areas:
+                "header"
+                "main"
+                "footer";
+        }
+        aside {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 200px;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+        }
+    }
+</style>
+</head>
+<body class="sidebar-hidden">
+
+<header>
+    <h1>Admin Dashboard</h1>
+    <div class="controls">
+        <button id="menuToggle">☰ Menu</button>
+        <button id="themeToggle">🌙 Dark Mode</button>
+    </div>
+</header>
+
+<aside>
+    <a href="#">Home</a>
+    <a href="#">Users</a>
+    <a href="#">Settings</a>
+</aside>
+
+<main>
+    <h2>Welcome, Admin!</h2>
+    <p>This is the main content area. Add charts, tables, or reports here.</p>
+</main>
+
+<footer>
+    &copy; 2025 Admin Panel
+</footer>
+
+<script>
+    const themeToggle = document.getElementById('themeToggle');
+    const menuToggle = document.getElementById('menuToggle');
+    const body = document.body;
+
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        themeToggle.textContent = body.classList.contains('dark-mode') 
+            ? '☀️ Light Mode' 
+            : '🌙 Dark Mode';
+    });
+
+    menuToggle.addEventListener('click', () => {
+        body.classList.toggle('sidebar-hidden');
+    });
+</script>
+
+</body>
+</html>
