@@ -1,82 +1,83 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+// employeeManagement.js
+const readline = require("readline");
 
-const app = express();
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
-app.use(bodyParser.json());
+// Initial employees
+let employees = [
+  { name: "Alice", id: "E101" },
+  { name: "Bob", id: "E102" },
+  { name: "Charlie", id: "E103" }
+];
 
-const employees = []; // in-memory array of employees
-
-// Homepage
-app.get('/', (req, res) => {
-  res.send(`
-    <h1>Welcome to Employee Management API</h1>
-    <p>Use <a href="/api/employees">/api/employees</a> to get JSON data.</p>
-    <p>Use <a href="/employees">/employees</a> to view employee list in browser.</p>
+// Show menu
+function showMenu() {
+  console.log(`
+Employee Management System
+1. Add Employee
+2. List Employees
+3. Remove Employee
+4. Exit
   `);
-});
 
-// Browser-friendly employee list
-app.get('/employees', (req, res) => {
-  let html = `
-    <h1>Employee List</h1>
-    <ul>
-  `;
+  rl.question("Enter your choice: ", (choice) => {
+    switch (choice) {
+      case "1":
+        addEmployee();
+        break;
+      case "2":
+        listEmployees();
+        break;
+      case "3":
+        removeEmployee();
+        break;
+      case "4":
+        console.log("Exiting...");
+        rl.close();
+        break;
+      default:
+        console.log("Invalid choice, try again.");
+        showMenu();
+    }
+  });
+}
 
-  if (employees.length === 0) {
-    html += <li>No employees found</li>;
-  } else {
-    employees.forEach(emp => {
-      html += <li><strong>ID:</strong> ${emp.id} | <strong>Name:</strong> ${emp.name}</li>;
+// Add employee
+function addEmployee() {
+  rl.question("Enter employee name: ", (name) => {
+    rl.question("Enter employee ID: ", (id) => {
+      employees.push({ name, id });
+      console.log(`Employee ${name} (ID: ${id}) added successfully.`);
+      showMenu();
     });
-  }
+  });
+}
 
-  html += `
-    </ul>
-    <p><a href="/">Back to Home</a></p>
-  `;
+// List employees
+function listEmployees() {
+  console.log("\nEmployee List:");
+  employees.forEach((emp, index) => {
+    console.log(`${index + 1}. Name: ${emp.name}, ID: ${emp.id}`);
+  });
+  showMenu();
+}
 
-  res.send(html);
-});
+// Remove employee
+function removeEmployee() {
+  rl.question("Enter employee ID to remove: ", (id) => {
+    const index = employees.findIndex(emp => emp.id === id);
+    if (index !== -1) {
+      const removed = employees.splice(index, 1)[0];
+      console.log(`Employee ${removed.name} (ID: ${removed.id}) removed successfully.`);
+    } else {
+      console.log("Employee not found.");
+    }
+    showMenu();
+  });
+}
 
-// --- API ENDPOINTS ---
-
-// Get all employees (JSON)
-app.get('/api/employees', (req, res) => {
-  res.json(employees);
-});
-
-// Add a new employee
-app.post('/api/employees', (req, res) => {
-  const { id, name } = req.body;
-
-  if (!id || !name) {
-    return res.status(400).json({ error: 'Employee id and name are required' });
-  }
-
-  if (employees.find(emp => emp.id === id)) {
-    return res.status(409).json({ error: 'Employee with this id already exists' });
-  }
-
-  employees.push({ id, name });
-  res.status(201).json({ message: 'Employee added', employee: { id, name } });
-});
-
-// Remove employee by id
-app.delete('/api/employees/:id', (req, res) => {
-  const { id } = req.params;
-  const index = employees.findIndex(emp => emp.id === id);
-
-  if (index === -1) {
-    return res.status(404).json({ error: 'Employee not found' });
-  }
-
-  const removed = employees.splice(index, 1);
-  res.json({ message: 'Employee removed', employee: removed[0] });
-});
-
-// --- Start server ---
-const port = 3000;
-app.listen(port, () => {
-  console.log(`🚀 Server running on http://localhost:${port}`);
-});
+// Start program
+showMenu();
